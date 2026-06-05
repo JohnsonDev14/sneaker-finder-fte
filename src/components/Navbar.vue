@@ -10,7 +10,9 @@
         <li>Promoções</li>
       </ul>
 
-      <a href="#">Venda seus tênis</a>
+      <router-link to="/admin/products/create" class="sell-link">
+        Venda seus tênis
+      </router-link>
 
     </div>
   </nav>
