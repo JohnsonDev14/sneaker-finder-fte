@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProductCreateView from '../views/ProductCreateView.vue'
+import ModelView from '../views/ModelView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,7 +13,11 @@ const router = createRouter({
     {
       path: '/admin/products/create',
       component: ProductCreateView
-    }
+    },
+    {
+  path: '/modelo/:id',
+  component: ModelView
+  }
   ]
 })
 

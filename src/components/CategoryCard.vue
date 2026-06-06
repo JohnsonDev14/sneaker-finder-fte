@@ -1,6 +1,8 @@
 <template>
-  <div class="category-card">
-
+  <RouterLink
+    :to="`/modelo/${category.id}`"
+    class="category-card"
+  >
     <img
       :src="category.image"
       :alt="category.name"
@@ -11,8 +13,7 @@
     <small>
       Ver modelos
     </small>
-
-  </div>
+  </RouterLink>
 </template>
 
 <script setup>
@@ -20,3 +21,12 @@ defineProps({
   category: Object
 })
 </script>
+
+<style scoped>
+.category-card{
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+</style>
