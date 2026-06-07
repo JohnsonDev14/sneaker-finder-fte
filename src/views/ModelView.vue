@@ -2,43 +2,47 @@
   <main class="model-page">
 
     <div class="breadcrumb">
-      Home / Nike / Dunk Low / Panda
+      Home /
+      {{ modelData.marca || 'Marca' }} /
+      {{ modelData.modelo || 'Modelo' }}
     </div>
 
     <section class="model-section">
-
-      <!-- GALERIA -->
 
       <div class="gallery">
 
         <div class="main-image">
           <img
             src="https://imgnike-a.akamaihd.net/1300x1300/01708551A2.jpg"
-            alt="Nike Dunk Panda"
+            alt="Sneaker"
           >
         </div>
 
         <div class="thumbnails">
-
           <img
             v-for="n in 5"
             :key="n"
             src="https://imgnike-a.akamaihd.net/1300x1300/01708551A2.jpg"
-            alt="Nike Dunk Panda"
+            alt=""
           >
-
         </div>
 
       </div>
 
-      <!-- INFORMAÇÕES DO MODELO -->
-
       <div class="model-info">
 
-        <h1>Nike Dunk Low "Panda"</h1>
+        <h1>
+          {{ modelData.nome || 'Carregando...' }}
+        </h1>
 
         <div class="meta">
-          Nike • Panda • Casual • Unissex
+          {{ modelData.marca }}
+          •
+          {{ modelData.modelo }}
+          •
+          {{ modelData.categoria }}
+          •
+          {{ modelData.genero }}
         </div>
 
         <div class="rating">
@@ -50,35 +54,33 @@
         </div>
 
         <div class="price">
-          R$ 699
+          R$ {{ lowestPrice }}
         </div>
 
         <div class="status">
-          12% abaixo da média do mercado
+          {{ totalOffers }} ofertas encontradas
         </div>
 
         <div class="stats">
 
           <div class="stat-card">
-            <strong>35</strong>
+            <strong>{{ totalOffers }}</strong>
             <span>Ofertas</span>
           </div>
 
           <div class="stat-card">
-            <strong>R$ 699</strong>
+            <strong>R$ {{ lowestPrice }}</strong>
             <span>Menor preço</span>
           </div>
 
           <div class="stat-card">
-            <strong>R$ 872</strong>
+            <strong>R$ {{ averagePrice }}</strong>
             <span>Preço médio</span>
           </div>
 
         </div>
 
       </div>
-
-      <!-- HISTÓRICO -->
 
       <div class="price-history">
 
@@ -91,8 +93,6 @@
       </div>
 
     </section>
-
-    <!-- BENEFÍCIOS -->
 
     <section class="features">
 
@@ -114,8 +114,6 @@
 
     </section>
 
-    <!-- DETALHES + OFERTAS -->
-
     <section class="details">
 
       <div class="specs">
@@ -123,34 +121,36 @@
         <h2>Detalhes do Modelo</h2>
 
         <table>
+
           <tbody>
 
             <tr>
               <td>Marca</td>
-              <td>Nike</td>
+              <td>{{ modelData.marca }}</td>
             </tr>
 
             <tr>
               <td>Modelo</td>
-              <td>Dunk Low</td>
+              <td>{{ modelData.modelo }}</td>
             </tr>
 
             <tr>
-              <td>Cor</td>
-              <td>White / Black</td>
+              <td>Colorway</td>
+              <td>{{ modelData.colorway }}</td>
             </tr>
 
             <tr>
               <td>SKU</td>
-              <td>DD1391-100</td>
+              <td>{{ modelData.id_sku_global }}</td>
             </tr>
 
             <tr>
               <td>Lançamento</td>
-              <td>2021</td>
+              <td>{{ modelData.anoLancamento }}</td>
             </tr>
 
           </tbody>
+
         </table>
 
       </div>
@@ -160,28 +160,28 @@
         <h2>Ofertas Disponíveis</h2>
 
         <div class="offers-header">
-          <span>Loja</span>
+          <span>Vendedor</span>
           <span>Tamanho</span>
           <span>Preço</span>
           <span></span>
         </div>
 
         <div
-          v-for="offer in offers"
-          :key="offer.id"
+          v-for="(offer, index) in offers"
+          :key="index"
           class="offer-row"
         >
 
           <div class="seller">
-            {{ offer.store }}
+            {{ offer.vendedor }}
           </div>
 
           <div>
-            {{ offer.size }}
+            {{ offer.tamanho }}
           </div>
 
           <div class="offer-price">
-            R$ {{ offer.price }}
+            R$ {{ offer.preco }}
           </div>
 
           <button class="buy-button">
@@ -198,28 +198,57 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import { getProducts } from '@/services/productService'
 
-const offers = [
-  {
-    id: 1,
-    store: 'Sneaker Hub',
-    size: 40,
-    price: 699
-  },
-  {
-    id: 2,
-    store: 'Urban Kicks',
-    size: 41,
-    price: 719
-  },
-  {
-    id: 3,
-    store: 'Street Store',
-    size: 42,
-    price: 729
+const offers = ref([])
+
+onMounted(async () => {
+  try {
+    const products = await getProducts()
+
+    offers.value = products
+
+  } catch (error) {
+    console.error('Erro ao carregar produtos:', error)
   }
-]
+})
 
+const totalOffers = computed(() => {
+  return offers.value.length
+})
+
+const lowestPrice = computed(() => {
+
+  if (!offers.value.length) return 0
+
+  return Math.min(
+    ...offers.value.map(
+      product => Number(product.preco)
+    )
+  )
+})
+
+const averagePrice = computed(() => {
+
+  if (!offers.value.length) return 0
+
+  const total = offers.value.reduce(
+    (sum, product) => sum + Number(product.preco),
+    0
+  )
+
+  return Math.round(total / offers.value.length)
+})
+
+const modelData = computed(() => {
+
+  if (!offers.value.length) {
+    return {}
+  }
+
+  return offers.value[0]
+})
 </script>
 
 <style scoped>
@@ -269,7 +298,6 @@ const offers = [
   border:1px solid #ddd;
   border-radius:8px;
   object-fit:cover;
-  cursor:pointer;
 }
 
 .model-info{
@@ -319,11 +347,6 @@ const offers = [
   border-radius:10px;
   padding:15px;
   text-align:center;
-}
-
-.stat-card strong{
-  display:block;
-  margin-bottom:5px;
 }
 
 .price-history{
@@ -380,18 +403,20 @@ td{
   border-bottom:1px solid #eee;
 }
 
-.offers-header{
+.offers-header,
+.offer-row{
   display:grid;
   grid-template-columns:2fr 1fr 1fr 140px;
+  align-items:center;
+}
+
+.offers-header{
   padding:12px 0;
   border-bottom:2px solid #eee;
   font-weight:600;
 }
 
 .offer-row{
-  display:grid;
-  grid-template-columns:2fr 1fr 1fr 140px;
-  align-items:center;
   padding:18px 0;
   border-bottom:1px solid #eee;
 }
@@ -412,10 +437,6 @@ td{
   border-radius:6px;
   padding:10px;
   cursor:pointer;
-}
-
-.buy-button:hover{
-  opacity:.9;
 }
 
 @media(max-width:1100px){
@@ -451,5 +472,4 @@ td{
   }
 
 }
-
 </style>

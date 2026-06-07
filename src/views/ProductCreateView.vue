@@ -14,6 +14,8 @@
 
     <div class="form-grid">
 
+      <!-- IMAGENS -->
+
       <section class="card image-card">
 
         <h2>Imagens do Produto</h2>
@@ -22,12 +24,13 @@
           class="main-image"
           @click="openFilePicker"
         >
+
           <img
             v-if="preview"
             :src="preview"
             class="preview"
             alt="Preview da imagem"
-          />
+          >
 
           <template v-else>
             <span class="plus">+</span>
@@ -40,10 +43,12 @@
             accept="image/*"
             hidden
             @change="handleFile"
-          />
+          >
+
         </div>
 
         <div class="gallery">
+
           <div
             v-for="n in 4"
             :key="n"
@@ -51,9 +56,12 @@
           >
             +
           </div>
+
         </div>
 
       </section>
+
+      <!-- INFORMAÇÕES BÁSICAS -->
 
       <section class="card info-card">
 
@@ -61,27 +69,58 @@
 
         <div class="form-group">
           <label>Nome do Produto*</label>
-          <input type="text">
+          <input
+            type="text"
+            v-model="form.nome"
+          >
         </div>
 
         <div class="form-group">
           <label>Marca*</label>
-          <input type="text">
+          <input
+            type="text"
+            v-model="form.marca"
+          >
         </div>
 
         <div class="form-group">
           <label>Modelo*</label>
-          <input type="text">
+          <input
+            type="text"
+            v-model="form.modelo"
+          >
         </div>
 
         <div class="form-group">
-          <label>Código SKU</label>
-          <input type="text">
+          <label>Colorway*</label>
+          <input
+            type="text"
+            v-model="form.colorway"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Código SKU*</label>
+          <input
+            type="text"
+            v-model="form.sku"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Ano de Lançamento*</label>
+          <input
+            type="number"
+            v-model="form.anoLancamento"
+          >
         </div>
 
         <div class="form-group">
           <label>Descrição*</label>
-          <textarea rows="5"></textarea>
+          <textarea
+            rows="5"
+            v-model="form.descricao"
+          ></textarea>
         </div>
 
       </section>
@@ -90,21 +129,37 @@
 
     <div class="bottom-grid">
 
+      <!-- VARIANTES -->
+
       <section class="card">
 
         <h2>Variantes</h2>
 
-        <select>
-          <option>Tamanho</option>
-        </select>
+        <div class="form-group">
+          <label>Tamanho*</label>
 
-        <select>
-          <option>Cor</option>
-        </select>
+          <select v-model="form.tamanho">
+            <option value="">Selecione</option>
+            <option>38</option>
+            <option>39</option>
+            <option>40</option>
+            <option>41</option>
+            <option>42</option>
+            <option>43</option>
+            <option>44</option>
+          </select>
+        </div>
 
-        <select>
-          <option>Edição</option>
-        </select>
+        <div class="form-group">
+          <label>Cor*</label>
+
+          <select v-model="form.cor">
+            <option value="">Selecione</option>
+            <option>White / Black</option>
+            <option>Black</option>
+            <option>White</option>
+          </select>
+        </div>
 
         <button class="outline-btn">
           Adicionar Variante
@@ -112,48 +167,89 @@
 
       </section>
 
+      <!-- PREÇO E ESTOQUE -->
+
       <section class="card">
 
         <h2>Preço e Estoque</h2>
 
-        <input
-          type="number"
-          placeholder="Preço"
-        >
+        <div class="form-group">
+          <label>Vendedor*</label>
+          <input
+            type="text"
+            v-model="form.vendedor"
+          >
+        </div>
 
-        <input
-          type="number"
-          placeholder="Estoque"
-        >
+        <div class="form-group">
+          <label>Preço*</label>
+          <input
+            type="number"
+            v-model="form.preco"
+          >
+        </div>
 
-        <select>
-          <option>Condição</option>
-        </select>
+        <div class="form-group">
+          <label>Estoque*</label>
+          <input
+            type="number"
+            v-model="form.estoque"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Condição*</label>
+
+          <select v-model="form.condicao">
+            <option value="">Selecione</option>
+            <option>Novo</option>
+            <option>Usado</option>
+          </select>
+        </div>
 
       </section>
+
+      <!-- OUTRAS INFORMAÇÕES -->
 
       <section class="card">
 
         <h2>Outras Informações</h2>
 
-        <select>
-          <option>Categoria</option>
-        </select>
+        <div class="form-group">
+          <label>Categoria*</label>
 
-        <select>
-          <option>Gênero</option>
-        </select>
+          <select v-model="form.categoria">
+            <option value="">Selecione</option>
+            <option>Casual</option>
+            <option>Corrida</option>
+            <option>Basquete</option>
+          </select>
+        </div>
 
-        <input type="date">
+        <div class="form-group">
+          <label>Gênero*</label>
+
+          <select v-model="form.genero">
+            <option value="">Selecione</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+            <option>Unissex</option>
+          </select>
+        </div>
 
       </section>
 
     </div>
 
     <div class="actions">
-      <button class="save-btn">
+
+      <button
+        class="save-btn"
+        @click="saveProduct"
+      >
         Salvar Produto
       </button>
+
     </div>
 
   </main>
@@ -161,22 +257,89 @@
 
 <script setup>
 import { ref } from 'vue'
+import { createProduct } from '@/services/productService'
 
 const fileInput = ref(null)
 const preview = ref(null)
+
+const form = ref({
+  nome: '',
+  marca: '',
+  modelo: '',
+  colorway: '',
+  sku: '',
+  descricao: '',
+
+  tamanho: '',
+  cor: '',
+
+  preco: '',
+  estoque: '',
+  condicao: '',
+
+  categoria: '',
+  genero: '',
+
+  anoLancamento: '',
+  vendedor: ''
+})
 
 function openFilePicker() {
   fileInput.value.click()
 }
 
 function handleFile(event) {
+
   const file = event.target.files[0]
 
   if (!file) return
 
   preview.value = URL.createObjectURL(file)
+}
 
-  console.log('Arquivo selecionado:', file)
+async function saveProduct() {
+
+  const payload = {
+    id_sku_global: form.value.sku,
+
+    nome: form.value.nome,
+    marca: form.value.marca,
+    modelo: form.value.modelo,
+    colorway: form.value.colorway,
+
+    descricao: form.value.descricao,
+
+    tamanho: form.value.tamanho,
+    cor: form.value.cor,
+
+    preco: Number(form.value.preco),
+    estoque: Number(form.value.estoque),
+
+    condicao: form.value.condicao,
+
+    categoria: form.value.categoria,
+    genero: form.value.genero,
+
+    anoLancamento: form.value.anoLancamento,
+    vendedor: form.value.vendedor,
+
+    imagemPrincipal: preview.value
+  }
+
+  try {
+
+    const response = await createProduct(payload)
+
+    console.log(response)
+
+    alert('Produto cadastrado com sucesso')
+
+  } catch(error) {
+
+    console.error(error)
+
+    alert('Erro ao cadastrar produto')
+  }
 }
 </script>
 
@@ -277,7 +440,6 @@ function handleFile(event) {
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
 }
 
 .form-group{
@@ -300,7 +462,6 @@ select{
 }
 
 .outline-btn{
-  margin-top:15px;
   width:100%;
   padding:10px;
   cursor:pointer;
@@ -333,5 +494,4 @@ select{
   }
 
 }
-
 </style>
